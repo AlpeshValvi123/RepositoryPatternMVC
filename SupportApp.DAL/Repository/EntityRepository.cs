@@ -13,8 +13,8 @@ namespace SupportApp.DAL.Repository
     /// <summary>
     /// Represents the entity repository implementation
     /// </summary>
-    /// <typeparam name="TEntity">Entity type</typeparam>
-    public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
+    /// <typeparam name="T">Entity type</typeparam>
+    public partial class EntityRepository<T> : IRepository<T> where T : BaseEntity
     {
         protected readonly SupportAppDbContext _context;
         public EntityRepository(SupportAppDbContext context)
@@ -27,23 +27,23 @@ namespace SupportApp.DAL.Repository
         /// Performs delete records in a table
         /// </summary>
         /// <param name="entities">Entities for delete operation</param>
-        /// <typeparam name="TEntity">Entity type</typeparam>
-        public void BulkDeleteEntities(IList<TEntity> entities)
+        /// <typeparam name="T">Entity type</typeparam>
+        public void BulkDeleteEntities(IList<T> entities)
         {
             foreach (var entity in entities)
-                _context.Set<TEntity>().Remove(entity);
+                _context.Set<T>().Remove(entity);
         }
 
         /// <summary>
         /// Performs insert records in a table
         /// </summary>
         /// <param name="entities">Entities for insert operation</param>
-        /// <typeparam name="TEntity">Entity type</typeparam>
-        public void BulkInsertEntities(IList<TEntity> entities)
+        /// <typeparam name="T">Entity type</typeparam>
+        public void BulkInsertEntities(IList<T> entities)
         {
             foreach (var entity in entities)
             {
-                _context.Set<TEntity>().Add(entity);
+                _context.Set<T>().Add(entity);
                 _context.SaveChanges();
             }
         }
@@ -57,11 +57,11 @@ namespace SupportApp.DAL.Repository
         /// <param name="orderBy"></param>
         /// <param name="includes"></param>
         /// <returns></returns>
-        public virtual async Task<IList<TEntity>> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, params Expression<Func<TEntity, object>>[] includes)
+        public virtual async Task<IList<T>> Get(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, params Expression<Func<T, object>>[] includes)
         {
-            IQueryable<TEntity> query = _context.Set<TEntity>();
+            IQueryable<T> query = _context.Set<T>();
 
-            foreach (Expression<Func<TEntity, object>> include in includes)
+            foreach (Expression<Func<T, object>> include in includes)
                 query = query.Include(include);
 
             if (filter != null)
@@ -79,9 +79,9 @@ namespace SupportApp.DAL.Repository
         /// <param name="filter"></param>
         /// <param name="orderBy"></param>
         /// <returns></returns>
-        public virtual IQueryable<TEntity> Query(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null)
+        public virtual IQueryable<T> Query(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null)
         {
-            IQueryable<TEntity> query = _context.Set<TEntity>();
+            IQueryable<T> query = _context.Set<T>();
 
             if (filter != null)
                 query = query.Where(filter);
@@ -97,11 +97,11 @@ namespace SupportApp.DAL.Repository
         /// </summary>
         /// <param name="filter"></param>
         /// <param name="includes"></param>
-        public virtual async Task<TEntity> GetFirstOrDefault(Expression<Func<TEntity, bool>> filter = null, params Expression<Func<TEntity, object>>[] includes)
+        public virtual async Task<T> GetFirstOrDefault(Expression<Func<T, bool>> filter = null, params Expression<Func<T, object>>[] includes)
         {
-            IQueryable<TEntity> query = _context.Set<TEntity>();
+            IQueryable<T> query = _context.Set<T>();
 
-            foreach (Expression<Func<TEntity, object>> include in includes)
+            foreach (Expression<Func<T, object>> include in includes)
                 query = query.Include(include);
 
             return await query.FirstOrDefaultAsync(filter);
@@ -112,18 +112,18 @@ namespace SupportApp.DAL.Repository
         /// </summary>
         /// <param name="id">Identitier</param>
         /// <returns>Entity</returns>
-        public async Task<TEntity> GetById(Guid id)
+        public async Task<T> GetById(Guid id)
         {
-            return await _context.Set<TEntity>().FindAsync(id);
+            return await _context.Set<T>().FindAsync(id);
         }
 
         /// <summary>
         /// Get entities
         /// </summary>
         /// <returns>Entities</returns>
-        public IEnumerable<TEntity> GetAll()
+        public IEnumerable<T> GetAll()
         {
-            return _context.Set<TEntity>().ToList();
+            return _context.Set<T>().ToList();
         }
 
         /// <summary>
@@ -131,21 +131,21 @@ namespace SupportApp.DAL.Repository
         /// </summary>
         /// <param name="entity">Entity</param>
         /// <returns>Entity</returns>
-        public void Insert(TEntity entity)
+        public void Insert(T entity)
         {
             if (entity is AuditableEntity auditableEntity)
             {
                 auditableEntity.Created = DateTime.Now;
                 auditableEntity.CreatedBy = entity.Id;
             }
-            _context.Set<TEntity>().Add(entity);
+            _context.Set<T>().Add(entity);
         }
 
         /// <summary>
         /// Insert entity entries
         /// </summary>
         /// <param name="entities">Entity entries</param>
-        public virtual void Insert(IList<TEntity> entities)
+        public virtual void Insert(IList<T> entities)
         {
             if (entities == null)
                 throw new ArgumentNullException(nameof(entities));
@@ -157,19 +157,19 @@ namespace SupportApp.DAL.Repository
         /// Delete entity
         /// </summary>
         /// <param name="entity">Entity</param>
-        public void Delete(TEntity entity)
+        public void Delete(T entity)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
-            _context.Set<TEntity>().Remove(entity);
+            _context.Set<T>().Remove(entity);
         }
 
         /// <summary>
         /// Delete entity entries
         /// </summary>
         /// <param name="entities">Entity entries</param>
-        public virtual void Delete(IList<TEntity> entities)
+        public virtual void Delete(IList<T> entities)
         {
             if (entities == null)
                 throw new ArgumentNullException(nameof(entities));
@@ -197,12 +197,12 @@ namespace SupportApp.DAL.Repository
         /// Delete entity entries by the passed predicate
         /// </summary>
         /// <param name="predicate">A function to test each element for a condition</param>
-        public virtual void Delete(Expression<Func<TEntity, bool>> predicate)
+        public virtual void Delete(Expression<Func<T, bool>> predicate)
         {
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
 
-            var entities = _context.Set<TEntity>()
+            var entities = _context.Set<T>()
                .Where(predicate).ToList();
 
             BulkDeleteEntities(entities);
@@ -214,7 +214,7 @@ namespace SupportApp.DAL.Repository
         /// </summary>
         /// <param name="entity">Entity</param>
         /// <returns>Entity</returns>
-        public void Update(TEntity entity)
+        public void Update(T entity)
         {
             _context.Entry(entity);
         }
@@ -236,15 +236,15 @@ namespace SupportApp.DAL.Repository
         /// <param name="pageSize">Page size</param>
         /// <param name="getOnlyTotalCount">Whether to get only the total number of entries without actually loading data</param>
         /// <returns>Paged list of entity entries</returns>
-        public virtual IPagedList<TEntity> GetAllPaged(Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
+        public virtual IPagedList<T> GetAllPaged(Func<IQueryable<T>, IQueryable<T>> func = null,
               int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false)
         {
-            //var query = await _context.Set<TEntity>().ToListAsync();
-            //IQueryable<TEntity> query = _context.Set<TEntity>();
+            //var query = await _context.Set<T>().ToListAsync();
+            //IQueryable<T> query = _context.Set<T>();
 
-            IQueryable<TEntity> query = func != null ? func(_context.Set<TEntity>()) : _context.Set<TEntity>();
+            IQueryable<T> query = func != null ? func(_context.Set<T>()) : _context.Set<T>();
 
-            return new PagedList<TEntity>(query, pageIndex, pageSize, getOnlyTotalCount);
+            return new PagedList<T>(query, pageIndex, pageSize, getOnlyTotalCount);
         }
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace SupportApp.DAL.Repository
         /// <returns></returns>
         public async Task<int> GetCount()
         {
-            return await _context.Set<TEntity>().CountAsync();
+            return await _context.Set<T>().CountAsync();
         }
 
         /// <summary>
@@ -261,18 +261,18 @@ namespace SupportApp.DAL.Repository
         /// </summary>
         /// <param name="ids">Entity entry identifiers</param>
         /// <returns>Entity entries</returns>
-        public virtual IList<TEntity> GetByIds(IList<Guid> ids)
+        public virtual IList<T> GetByIds(IList<Guid> ids)
         {
             if (!ids?.Any() ?? true)
-                return new List<TEntity>();
+                return new List<T>();
 
-            var query = _context.Set<TEntity>();
+            var query = _context.Set<T>();
 
             //get entries
             var entries = query.Where(entry => ids.Contains(entry.Id)).ToList();
 
             //sort by passed identifiers
-            var sortedEntries = new List<TEntity>();
+            var sortedEntries = new List<T>();
             foreach (var id in ids)
             {
                 var sortedEntry = entries.FirstOrDefault(entry => entry.Id == id);

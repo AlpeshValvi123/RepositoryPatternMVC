@@ -11,8 +11,8 @@ namespace SupportApp.DAL.Repository
     /// <summary>
     /// Represents an entity repository
     /// </summary>
-    /// <typeparam name="TEntity">Entity type</typeparam>
-    public interface IRepository<TEntity> where TEntity : BaseEntity
+    /// <typeparam name="T">Entity type</typeparam>
+    public interface IRepository<T> where T : BaseEntity
     {
         /// <summary>
         /// Get all entities
@@ -21,10 +21,10 @@ namespace SupportApp.DAL.Repository
         /// <param name="orderBy"></param>
         /// <param name="includes"></param>
         /// <returns></returns>
-        Task<IList<TEntity>> Get(
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            params Expression<Func<TEntity, object>>[] includes);
+        Task<IList<T>> Get(
+            Expression<Func<T, bool>> filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+            params Expression<Func<T, object>>[] includes);
 
         /// <summary>
         /// Get query for entity
@@ -32,8 +32,8 @@ namespace SupportApp.DAL.Repository
         /// <param name="filter"></param>
         /// <param name="orderBy"></param>
         /// <returns></returns>
-        IQueryable<TEntity> Query(Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null);
+        IQueryable<T> Query(Expression<Func<T, bool>> filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null);
 
         /// <summary>
         /// Get first or default entity by filter
@@ -41,9 +41,9 @@ namespace SupportApp.DAL.Repository
         /// <param name="filter"></param>
         /// <param name="includes"></param>
         /// <returns></returns>
-        Task<TEntity> GetFirstOrDefault(
-            Expression<Func<TEntity, bool>> filter = null,
-            params Expression<Func<TEntity, object>>[] includes);
+        Task<T> GetFirstOrDefault(
+            Expression<Func<T, bool>> filter = null,
+            params Expression<Func<T, object>>[] includes);
 
 
         /// <summary>
@@ -51,13 +51,13 @@ namespace SupportApp.DAL.Repository
         /// </summary>
         /// <param name="id">Identifier</param>
         /// <returns>Entity</returns>
-        Task<TEntity> GetById(Guid id);
+        Task<T> GetById(Guid id);
 
         /// <summary>
         /// Get entities
         /// </summary>
         /// <returns>Entities</returns>
-        IEnumerable<TEntity> GetAll();
+        IEnumerable<T> GetAll();
 
         /// <summary>
         /// Get paged list of all entity entries
@@ -67,7 +67,7 @@ namespace SupportApp.DAL.Repository
         /// <param name="pageSize">Page size</param>
         /// <param name="getOnlyTotalCount">Whether to get only the total number of entries without actually loading data</param>
         /// <returns>Paged list of entity entries</returns>
-        IPagedList<TEntity> GetAllPaged(Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
+        IPagedList<T> GetAllPaged(Func<IQueryable<T>, IQueryable<T>> func = null,
             int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false);
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace SupportApp.DAL.Repository
         /// </summary>
         /// <param name="ids">Entity entry identifiers</param>
         /// <returns>Entity entries</returns>
-        IList<TEntity> GetByIds(IList<Guid> ids);
+        IList<T> GetByIds(IList<Guid> ids);
 
         /// <summary>
         /// Get total count of the records
@@ -88,38 +88,38 @@ namespace SupportApp.DAL.Repository
         /// </summary>
         /// <param name="entity">Entity</param>
         /// <returns>Entity</returns>
-        void Insert(TEntity entity);
+        void Insert(T entity);
 
         /// <summary>
         /// Insert entity entries
         /// </summary>
         /// <param name="entities">Entity entries</param>
-        void Insert(IList<TEntity> entities);
+        void Insert(IList<T> entities);
 
         /// <summary>
         /// Delete entity
         /// </summary>
         /// <param name="entity">Entity</param>
-        void Delete(TEntity entity);
+        void Delete(T entity);
 
         /// <summary>
         /// Delete entity entries
         /// </summary>
         /// <param name="entities">Entity entries</param>
-        void Delete(IList<TEntity> entities);
+        void Delete(IList<T> entities);
 
         /// <summary>
         /// Delete entity entries by the passed predicate
         /// </summary>
         /// <param name="predicate">A function to test each element for a condition</param>
-        void Delete(Expression<Func<TEntity, bool>> predicate);
+        void Delete(Expression<Func<T, bool>> predicate);
 
         /// <summary>
         /// Update entity
         /// </summary>
         /// <param name="entity">Entity</param>
         /// <returns>Entity</returns>
-        void Update(TEntity entity);
+        void Update(T entity);
 
         /// <summary>
         /// Save entity
